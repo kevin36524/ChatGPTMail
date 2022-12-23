@@ -24,10 +24,9 @@ async function getAccessToken() {
   return data.accessToken
 }
 
-async function generateAnswers(port, question) {
+async function generateAnswers(port, question, conversationId) {
   const accessToken = await getAccessToken()
 
-  let conversationId
   const deleteConversation = () => {
     if (conversationId) {
       setConversationProperty(accessToken, conversationId, { is_visible: false })
@@ -40,6 +39,26 @@ async function generateAnswers(port, question) {
     deleteConversation()
   })
 
+  const payload = {
+    action: 'next',
+    messages: [
+      {
+        id: uuidv4(),
+        role: 'user',
+        content: {
+          content_type: 'text',
+          parts: [question],
+        },
+      },
+    ],
+    model: 'text-davinci-002-render',
+    parent_message_id: uuidv4(),
+  }
+
+  if (conversationId) {
+    payload.conversation_id = conversationId
+  }
+
   await fetchSSE('https://chat.openai.com/backend-api/conversation', {
     method: 'POST',
     signal: controller.signal,
@@ -47,21 +66,7 @@ async function generateAnswers(port, question) {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({
-      action: 'next',
-      messages: [
-        {
-          id: uuidv4(),
-          role: 'user',
-          content: {
-            content_type: 'text',
-            parts: [question],
-          },
-        },
-      ],
-      model: 'text-davinci-002-render',
-      parent_message_id: uuidv4(),
-    }),
+    body: JSON.stringify(payload),
     onMessage(message) {
       console.debug('sse message', message)
       if (message === '[DONE]') {
@@ -87,7 +92,7 @@ Browser.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener(async (msg) => {
     console.debug('received msg', msg)
     try {
-      await generateAnswers(port, msg.question)
+      await generateAnswers(port, msg.question, msg.conversationId)
     } catch (err) {
       console.error(err)
       port.postMessage({ error: err.message })

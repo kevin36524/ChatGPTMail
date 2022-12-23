@@ -20,9 +20,25 @@ export const config = {
     appendContainerQuery: [],
   },
   yahoo: {
-    inputQuery: ["input[name='p']"],
-    sidebarContainerQuery: ['#right', '.Contents__inner.Contents__inner--sub'],
-    appendContainerQuery: ['#cols', '#contents__wrap'],
+    inputQuery: ["input[data-test-id='compose-subject']"],
+    sidebarContainerQuery: ['.siderbar-free'],
+    appendContainerQuery: ["div[data-test-id='compact-compose-container']"],
+    watchRouteChange(callback) {
+      const targetNode = document.querySelector("div[data-test-id='compact-compose-container'")
+      const observer = new MutationObserver(function (records) {
+        for (const record of records) {
+          if (record.type === 'childList') {
+            for (const node of record.addedNodes) {
+              if (node.getAttribute('data-test-id') === 'compact-compose-item') {
+                setTimeout(callback, 2000)
+                return
+              }
+            }
+          }
+        }
+      })
+      observer.observe(targetNode, { childList: true })
+    },
   },
   duckduckgo: {
     inputQuery: ["input[name='q']"],

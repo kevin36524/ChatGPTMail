@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { memo, useCallback, useState } from 'react'
-import { ThumbsupIcon, ThumbsdownIcon } from '@primer/octicons-react'
+import { ThumbsupIcon, ThumbsdownIcon, XIcon, CopyIcon } from '@primer/octicons-react'
 import Browser from 'webextension-polyfill'
 
 const ChatGPTFeedback = (props) => {
@@ -52,6 +52,12 @@ const ChatGPTFeedback = (props) => {
       >
         <ThumbsdownIcon size={14} />
       </span>
+      <span onClick={props.copyCallback}>
+        <CopyIcon size={14} />
+      </span>
+      <span onClick={props.closeCallback}>
+        <XIcon size={14} />
+      </span>
     </div>
   )
 }
@@ -59,6 +65,8 @@ const ChatGPTFeedback = (props) => {
 ChatGPTFeedback.propTypes = {
   messageId: PropTypes.string.isRequired,
   conversationId: PropTypes.string.isRequired,
+  closeCallback: PropTypes.func.isRequired,
+  copyCallback: PropTypes.func.isRequired,
 }
 
 export default memo(ChatGPTFeedback)

@@ -217,6 +217,7 @@
         "https://search.yahoo.co.jp/search*",
         "https://search.naver.com/search*",
         "https://search.brave.com/search*",
+        "https://*.mail.yahoo.com/*",
         "https://duckduckgo.com/*",
         "https://www.baidu.com/*",
         "https://*.yandex.com/search*",

@@ -7,7 +7,7 @@ import { endsWithQuestionMark } from './utils.mjs'
 function ChatGPTCard(props) {
   const [triggered, setTriggered] = useState(false)
   if (props.triggerMode === 'always') {
-    return <ChatGPTQuery question={props.question} />
+    return <ChatGPTQuery question={props.question} closeCallback={props.closeCallback} />
   }
   if (props.triggerMode === 'questionMark') {
     if (endsWithQuestionMark(props.question.trim())) {
@@ -32,6 +32,7 @@ function ChatGPTCard(props) {
 ChatGPTCard.propTypes = {
   question: PropTypes.string.isRequired,
   triggerMode: PropTypes.string.isRequired,
+  closeCallback: PropTypes.func.isRequired,
 }
 
 export default ChatGPTCard

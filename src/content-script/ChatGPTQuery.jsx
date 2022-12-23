@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import Browser from 'webextension-polyfill'
 import ChatGPTFeedback from './ChatGPTFeedback'
-import { isBraveBrowser } from './utils.mjs'
+import { copyToClipboard, isBraveBrowser } from './utils.mjs'
 import './highlight.scss'
 
 function ChatGPTQuery(props) {
@@ -13,6 +13,10 @@ function ChatGPTQuery(props) {
   const [error, setError] = useState('')
   const [retry, setRetry] = useState(0)
   const [, setDone] = useState(false)
+
+  const copyAnswerToClipboard = () => {
+    copyToClipboard(answer.text)
+  }
 
   useEffect(() => {
     const port = Browser.runtime.connect()
@@ -52,7 +56,12 @@ function ChatGPTQuery(props) {
       <div id="answer" className="markdown-body gpt-inner" dir="auto">
         <div className="gpt-header">
           <p>ChatGPT</p>
-          <ChatGPTFeedback messageId={answer.messageId} conversationId={answer.conversationId} />
+          <ChatGPTFeedback
+            messageId={answer.messageId}
+            conversationId={answer.conversationId}
+            closeCallback={props.closeCallback}
+            copyCallback={copyAnswerToClipboard}
+          />
         </div>
         <ReactMarkdown rehypePlugins={[[rehypeHighlight, { detect: true }]]}>
           {answer.text}
@@ -94,6 +103,7 @@ function ChatGPTQuery(props) {
 
 ChatGPTQuery.propTypes = {
   question: PropTypes.string.isRequired,
+  closeCallback: PropTypes.func.isRequired,
 }
 
 export default memo(ChatGPTQuery)

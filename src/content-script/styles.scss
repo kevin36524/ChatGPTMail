@@ -14,6 +14,11 @@
   border: 1px solid;
   flex-basis: 0;
   flex-grow: 1;
+  pointer-events: all;
+  -webkit-user-select: text;
+  user-select: text;
+  max-height: 500px;
+  overflow: scroll;
 
   &.sidebar-free {
     margin-left: 30px;
