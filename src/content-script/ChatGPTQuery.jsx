@@ -9,10 +9,15 @@ import { copyToClipboard, isBraveBrowser } from './utils.mjs'
 import './highlight.scss'
 
 function ChatGPTQuery(props) {
-  const [answer, setAnswer] = useState(null)
+  const [answer, setAnswer] = useState({})
   const [error, setError] = useState('')
   const [retry, setRetry] = useState(0)
   const [, setDone] = useState(false)
+  const [followUpQuestion, setFollowUpQuestion] = useState('')
+
+  const handleFollowUpQuestionChange = (event) => {
+    setFollowUpQuestion(event.target.value)
+  }
 
   const copyAnswerToClipboard = () => {
     copyToClipboard(answer.text)
@@ -51,7 +56,18 @@ function ChatGPTQuery(props) {
     }
   }, [error])
 
+  const closeCallback = () => {
+    console.log(`KEVINDEBUG delete ${answer.conversationId}`)
+    props.closeCallback()
+  }
+
+  const askFollowUpQuestion = () => {
+    console.log(`KEVINDEBUG I will ask ${followUpQuestion} on ${answer.conversationId}`)
+  }
+
   if (answer) {
+    console.log(`KEVINDEBUG re-rendering ${answer.conversationId}`)
+
     return (
       <div id="answer" className="markdown-body gpt-inner" dir="auto">
         <div className="gpt-header">
@@ -59,13 +75,22 @@ function ChatGPTQuery(props) {
           <ChatGPTFeedback
             messageId={answer.messageId}
             conversationId={answer.conversationId}
-            closeCallback={props.closeCallback}
+            closeCallback={closeCallback}
             copyCallback={copyAnswerToClipboard}
           />
         </div>
         <ReactMarkdown rehypePlugins={[[rehypeHighlight, { detect: true }]]}>
           {answer.text}
         </ReactMarkdown>
+        <div id="input-provider">
+          <textarea
+            onChange={handleFollowUpQuestionChange}
+            type="text"
+            name="new-question"
+            rows="1"
+          ></textarea>
+          <button onClick={askFollowUpQuestion}> Send </button>
+        </div>
       </div>
     )
   }

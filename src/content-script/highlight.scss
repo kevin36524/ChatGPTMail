@@ -193,3 +193,16 @@
     background-color: #67060c;
   }
 }
+
+#input-provider {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  textarea {
+    appearance: none;
+    height: 25px;
+    max-height: 200px;
+    width: 628px;
+  }
+}

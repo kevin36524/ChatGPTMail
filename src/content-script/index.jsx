@@ -1,18 +1,20 @@
 import 'github-markdown-css'
 import { render } from 'preact'
-import { getUserConfig } from '../config'
+import { unmountComponentAtNode } from 'preact/compat'
 import ChatGPTCard from './ChatGPTCard'
 import { config } from './search-engine-configs.mjs'
 import './styles.scss'
 import { getPossibleElementByQuerySelector } from './utils.mjs'
 
 async function mount(question, siteConfig) {
-  const container = document.createElement('div')
+  let container = document.createElement('div')
   container.className = 'chat-gpt-container'
 
-  const siderbarContainer = document.querySelector('.sidebar-free')
-  if (siderbarContainer) {
-    siderbarContainer.parentElement.removeChild(siderbarContainer)
+  const chatGPTContainer = document.querySelector('.chat-gpt-container')
+  if (chatGPTContainer) {
+    console.log(`KEVINDEBUG container already exists`)
+    renderOrUpdateCard(question, chatGPTContainer)
+    return
   }
 
   container.classList.add('sidebar-free')
@@ -21,13 +23,17 @@ async function mount(question, siteConfig) {
     appendContainer.appendChild(container)
   }
 
-  const userConfig = await getUserConfig()
+  renderOrUpdateCard(question, container)
+}
+
+const renderOrUpdateCard = (question, container) => {
   render(
     <ChatGPTCard
       question={question}
-      triggerMode={userConfig.triggerMode || 'always'}
+      triggerMode={'always'}
       closeCallback={() => {
         const siderbarContainer = document.querySelector('.sidebar-free')
+        unmountComponentAtNode(siderbarContainer)
         siderbarContainer.parentElement.removeChild(siderbarContainer)
       }}
     />,
