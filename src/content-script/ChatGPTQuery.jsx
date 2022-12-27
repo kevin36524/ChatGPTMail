@@ -13,15 +13,20 @@ function ChatGPTQuery(props) {
   const [error, setError] = useState('')
   const [retry, setRetry] = useState(0)
   const [, setDone] = useState(false)
-  const [followUpQuestion, setFollowUpQuestion] = useState('')
+  const [followUpQuestionText, setFollowUpQuestionText] = useState(null)
+  const [question, setQuestion] = useState(null)
 
   const handleFollowUpQuestionChange = (event) => {
-    setFollowUpQuestion(event.target.value)
+    setFollowUpQuestionText(event.target.value)
   }
 
   const copyAnswerToClipboard = () => {
     copyToClipboard(answer.text)
   }
+
+  useEffect(() => {
+    setQuestion(props.question)
+  }, [props.question])
 
   useEffect(() => {
     const port = Browser.runtime.connect()
@@ -35,12 +40,16 @@ function ChatGPTQuery(props) {
       }
     }
     port.onMessage.addListener(listener)
-    port.postMessage({ question: props.question })
+    port.postMessage({
+      question: question,
+      conversationId: answer.conversationId,
+      parentMessageId: answer.messageId,
+    })
     return () => {
       port.onMessage.removeListener(listener)
       port.disconnect()
     }
-  }, [props.question, retry])
+  }, [question, retry])
 
   // retry error on focus
   useEffect(() => {
@@ -57,17 +66,24 @@ function ChatGPTQuery(props) {
   }, [error])
 
   const closeCallback = () => {
+    const port = Browser.runtime.connect()
+    port.postMessage({
+      command: 'deleteConversation',
+      question: question,
+      conversationId: answer.conversationId,
+    })
+
     console.log(`KEVINDEBUG delete ${answer.conversationId}`)
     props.closeCallback()
   }
 
   const askFollowUpQuestion = () => {
-    console.log(`KEVINDEBUG I will ask ${followUpQuestion} on ${answer.conversationId}`)
+    setQuestion(followUpQuestionText)
+    console.log(`KEVINDEBUG I will ask ${followUpQuestionText} on ${answer.conversationId}`)
   }
 
   if (answer) {
     console.log(`KEVINDEBUG re-rendering ${answer.conversationId}`)
-
     return (
       <div id="answer" className="markdown-body gpt-inner" dir="auto">
         <div className="gpt-header">

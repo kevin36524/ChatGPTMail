@@ -24,19 +24,19 @@ async function getAccessToken() {
   return data.accessToken
 }
 
-async function generateAnswers(port, question, conversationId) {
+const deleteConversation = async (conversationId) => {
   const accessToken = await getAccessToken()
+  await setConversationProperty(accessToken, conversationId, { is_visible: false })
+}
 
-  const deleteConversation = () => {
-    if (conversationId) {
-      setConversationProperty(accessToken, conversationId, { is_visible: false })
-    }
-  }
-
+async function generateAnswers(port, question, conversationId, parentMessageId) {
+  const accessToken = await getAccessToken()
   const controller = new AbortController()
   port.onDisconnect.addListener(() => {
     controller.abort()
-    deleteConversation()
+    // if (conversationId) {
+    //   deleteConversation(conversationId)
+    // }
   })
 
   const payload = {
@@ -52,7 +52,7 @@ async function generateAnswers(port, question, conversationId) {
       },
     ],
     model: 'text-davinci-002-render',
-    parent_message_id: uuidv4(),
+    parent_message_id: parentMessageId ?? uuidv4(),
   }
 
   if (conversationId) {
@@ -71,7 +71,6 @@ async function generateAnswers(port, question, conversationId) {
       console.debug('sse message', message)
       if (message === '[DONE]') {
         port.postMessage({ event: 'DONE' })
-        deleteConversation()
         return
       }
       const data = JSON.parse(message)
@@ -90,9 +89,12 @@ async function generateAnswers(port, question, conversationId) {
 
 Browser.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener(async (msg) => {
-    console.debug('received msg', msg)
+    console.log('KEVINDEBUG received msg', msg)
     try {
-      await generateAnswers(port, msg.question, msg.conversationId)
+      if (msg.command == 'deleteConversation') {
+        await deleteConversation(msg.conversationId)
+      }
+      await generateAnswers(port, msg.question, msg.conversationId, msg.parentMessageId)
     } catch (err) {
       console.error(err)
       port.postMessage({ error: err.message })
