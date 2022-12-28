@@ -30,6 +30,9 @@ const deleteConversation = async (conversationId) => {
 }
 
 async function generateAnswers(port, question, conversationId, parentMessageId) {
+  if (!question) {
+    throw new Error('Question not found')
+  }
   const accessToken = await getAccessToken()
   const controller = new AbortController()
   port.onDisconnect.addListener(() => {
@@ -93,8 +96,9 @@ Browser.runtime.onConnect.addListener((port) => {
     try {
       if (msg.command == 'deleteConversation') {
         await deleteConversation(msg.conversationId)
+      } else {
+        await generateAnswers(port, msg.question, msg.conversationId, msg.parentMessageId)
       }
-      await generateAnswers(port, msg.question, msg.conversationId, msg.parentMessageId)
     } catch (err) {
       console.error(err)
       port.postMessage({ error: err.message })

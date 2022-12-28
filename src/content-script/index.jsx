@@ -6,9 +6,11 @@ import { config } from './search-engine-configs.mjs'
 import './styles.scss'
 import { getPossibleElementByQuerySelector } from './utils.mjs'
 
-async function mount(question, siteConfig) {
+async function mount(question) {
   let container = document.createElement('div')
   container.className = 'chat-gpt-container'
+
+  console.log(`KEVINDEBUG I am mounting with question ${question}`)
 
   const chatGPTContainer = document.querySelector('.chat-gpt-container')
   if (chatGPTContainer) {
@@ -18,7 +20,7 @@ async function mount(question, siteConfig) {
   }
 
   container.classList.add('sidebar-free')
-  const appendContainer = getPossibleElementByQuerySelector(siteConfig.appendContainerQuery)
+  const appendContainer = document.querySelector('div[data-test-id="content-below-tabs"]')
   if (appendContainer) {
     appendContainer.appendChild(container)
   }
@@ -52,9 +54,10 @@ function run() {
   if (searchInput) {
     searchInput.addEventListener('keydown', function (event) {
       // Check if the key that was pressed was the enter key
+      console.log(`KEVINDEBUG key is ${event.key}`)
       if (event.key === 'Enter') {
         // The enter key was pressed
-        mount(searchInput.value, siteConfig)
+        mount(searchInput.value)
       }
     })
     console.log('KEVINDEBUG Mount ChatGPT on', siteName)
