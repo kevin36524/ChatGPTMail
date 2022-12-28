@@ -25,6 +25,9 @@ export const config = {
     appendContainerQuery: ["div[data-test-id='compact-compose-container']"],
     watchRouteChange(callback) {
       const targetNode = document.querySelector("div[data-test-id='compact-compose-container'")
+      if (!targetNode) {
+        return
+      }
       const observer = new MutationObserver(function (records) {
         for (const record of records) {
           if (record.type === 'childList') {
