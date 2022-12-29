@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks'
 import PropTypes from 'prop-types'
-import { memo } from 'react'
+import { memo, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import Browser from 'webextension-polyfill'
@@ -18,6 +18,17 @@ function ChatGPTQuery(props) {
 
   const handleFollowUpQuestionChange = (event) => {
     setFollowUpQuestionText(event.target.value)
+  }
+
+  const followUpQuestionRef = useRef(null)
+
+  // handle Key Press on Question Text Area
+  const handleKeyPressOnQTA = (e) => {
+    var code = e.keyCode ? e.keyCode : e.which
+    if (code == 13 && !e.shiftKey) {
+      //Enter keycode
+      askFollowUpQuestion()
+    }
   }
 
   const copyAnswerToClipboard = () => {
@@ -80,6 +91,7 @@ function ChatGPTQuery(props) {
   const askFollowUpQuestion = () => {
     setQuestion(followUpQuestionText)
     console.log(`KEVINDEBUG I will ask ${followUpQuestionText} on ${answer.conversationId}`)
+    followUpQuestionRef.current.value = ''
   }
 
   if (answer) {
@@ -101,7 +113,9 @@ function ChatGPTQuery(props) {
         <div id="input-provider">
           <textarea
             onChange={handleFollowUpQuestionChange}
+            onKeyPress={handleKeyPressOnQTA}
             type="text"
+            ref={followUpQuestionRef}
             name="new-question"
             rows="1"
           ></textarea>

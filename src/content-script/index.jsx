@@ -6,28 +6,6 @@ import { config } from './search-engine-configs.mjs'
 import './styles.scss'
 import { getPossibleElementByQuerySelector } from './utils.mjs'
 
-async function mount(question) {
-  let container = document.createElement('div')
-  container.className = 'chat-gpt-container'
-
-  console.log(`KEVINDEBUG I am mounting with question ${question}`)
-
-  const chatGPTContainer = document.querySelector('.chat-gpt-container')
-  if (chatGPTContainer) {
-    console.log(`KEVINDEBUG container already exists`)
-    renderOrUpdateCard(question, chatGPTContainer)
-    return
-  }
-
-  container.classList.add('sidebar-free')
-  const appendContainer = document.querySelector('div[data-test-id="content-below-tabs"]')
-  if (appendContainer) {
-    appendContainer.appendChild(container)
-  }
-
-  renderOrUpdateCard(question, container)
-}
-
 const renderOrUpdateCard = (question, container) => {
   render(
     <ChatGPTCard
@@ -48,27 +26,20 @@ const siteName = location.hostname.match(siteRegex)[0]
 const siteConfig = config[siteName]
 
 function run() {
-  console.log('KEVINDEBUG Calling run')
   const searchInput = getPossibleElementByQuerySelector(siteConfig.inputQuery)
 
   if (searchInput) {
     searchInput.addEventListener('keydown', function (event) {
       // Check if the key that was pressed was the enter key
-      console.log(`KEVINDEBUG key is ${event.key}`)
       if (event.key === 'Enter') {
         // The enter key was pressed
-        mount(searchInput.value)
+        mountChatGPT(searchInput.value)
       }
     })
-    console.log('KEVINDEBUG Mount ChatGPT on', siteName)
   }
 }
 
 run()
-
-if (siteConfig.watchRouteChange) {
-  siteConfig.watchRouteChange(run)
-}
 
 async function mountChatGPT(question) {
   let container = document.createElement('div')
@@ -76,12 +47,10 @@ async function mountChatGPT(question) {
 
   const chatGPTContainer = document.querySelector('.chat-gpt-container')
   if (chatGPTContainer) {
-    console.log(`KEVINDEBUG container already exists`)
     renderOrUpdateCard(question, chatGPTContainer)
     return
   }
 
-  console.log(`KEVINDEBUG container doesn't exists`)
   container.classList.add('sidebar-free')
   const appendContainer = document.querySelector('div[data-test-id="content-below-tabs"]')
   if (appendContainer) {
@@ -103,26 +72,27 @@ function addMessageReadChatGPTContainer() {
 
 function addButtonOnMessageReadToolbar() {
   const toolbarContainer = document.querySelector('div[data-test-id="message-toolbar"] ul')
+  const messageReadView = document.querySelector("div[data-test-id='message-group-view']")
+  if (!messageReadView) {
+    return
+  }
   const button = document.createElement('button')
   button.innerText = 'ChatGPTfy'
   button.onclick = addMessageReadChatGPTContainer
   toolbarContainer.appendChild(button)
 }
 
-function waitForMessageRead() {
-  console.log('KEVINDEBUG add  1 a chatGPT button on the messageRead')
+function waitForMessageReadOrCompose() {
   const targetNode = document.querySelector("div[data-test-id='mail-app-component'] div")
   const observer = new MutationObserver(function (records) {
     for (const record of records) {
       if (record.type === 'childList') {
         for (const node of record.addedNodes) {
           if (node.getAttribute('data-test-id') === 'message-group-view') {
-            console.log('KEVINDEBUG add a chatGPT button on the messageRead')
             addButtonOnMessageReadToolbar()
             return
           }
           if (node.getAttribute('data-test-id') === 'compose-styler') {
-            console.log('KEVINDEBUG add a chatGPT to the compose')
             run()
             return
           }
@@ -133,4 +103,5 @@ function waitForMessageRead() {
   observer.observe(targetNode, { childList: true })
 }
 
-waitForMessageRead()
+addButtonOnMessageReadToolbar()
+waitForMessageReadOrCompose()
