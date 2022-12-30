@@ -26,8 +26,6 @@ function Popup() {
 
   const restoreToDefault = async () => {
     await deleteKey(keys.MESSAGE_PREPEND_QUERY)
-    const userQuery = await getUserConfig(keys.MESSAGE_PREPEND_QUERY)
-    console.log(`KEVINDEBUG the userQuery after reset is ${userQuery}`)
     setNeedsReset(!needsReset) // Just toggling to redraw the component
   }
 
