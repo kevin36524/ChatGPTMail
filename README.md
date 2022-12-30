@@ -10,9 +10,11 @@ A browser extension to help compose and consume Mails with ChatGPT supports Chro
 - Answer follow-up questions: Have a question about an email you received? The extension can help you find the answer by searching through your emails and providing relevant information.
 
 
-## Screenshot
+## Screenshots
 
-![Screenshot](screenshots/extension.png?raw=true)
+<img width="1728" alt="image" src="https://user-images.githubusercontent.com/349873/210038070-bb779513-533b-40f5-9e60-7dc91b9e1dc4.png">
+<img width="1716" alt="image" src="https://user-images.githubusercontent.com/349873/210038278-389293c4-e330-4301-8248-e6c00e3080ae.png">
+<img width="1724" alt="image" src="https://user-images.githubusercontent.com/349873/210038326-ec1b4f26-c325-4b08-a569-20df193d3c76.png">
 
 ## Installation
 
