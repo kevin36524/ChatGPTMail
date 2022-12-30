@@ -1,6 +1,7 @@
 import 'github-markdown-css'
 import { render } from 'preact'
 import { unmountComponentAtNode } from 'preact/compat'
+import { getUserConfig, keys } from '../config'
 import ChatGPTCard from './ChatGPTCard'
 import { config } from './search-engine-configs.mjs'
 import './styles.scss'
@@ -60,11 +61,8 @@ async function mountChatGPT(question) {
   renderOrUpdateCard(question, container)
 }
 
-function addMessageReadChatGPTContainer() {
-  let question = `can you provide me with a json payload for the below 
-  email with following information likelyhood_of_reading(scale of 0 to 10), 
-  type_of_message(personal, receipt, deal, flight, spam), summary, phonenumbers, bill_receipt, package_tracking_number, 
-  reply, flight_number, airline, deals. Also if any of the asked information is not available please return null \n`
+async function addMessageReadChatGPTContainer() {
+  let question = await getUserConfig(keys.MESSAGE_PREPEND_QUERY)
 
   question += document.querySelector('div[data-test-id="message-view-body"]').innerText
   mountChatGPT(question)

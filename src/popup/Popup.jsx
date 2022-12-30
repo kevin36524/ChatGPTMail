@@ -1,47 +1,59 @@
 import '@picocss/pico'
 import { MarkGithubIcon } from '@primer/octicons-react'
-import { useCallback, useEffect, useState } from 'preact/hooks'
-import { getUserConfig, TRIGGER_MODES, updateUserConfig } from '../config'
+import { useEffect, useRef } from 'preact/hooks'
+import { useState } from 'react'
+import { getUserConfig, updateUserConfig, keys, deleteKey } from '../config'
 import './styles.css'
 
 function Popup() {
-  const [triggerMode, setTriggerMode] = useState()
+  const messageReadPrependQueryRef = useRef(null)
+
+  const [needsReset, setNeedsReset] = useState(false)
 
   useEffect(() => {
-    getUserConfig().then((config) => {
-      setTriggerMode(config.triggerMode || 'always')
+    getUserConfig(keys.MESSAGE_PREPEND_QUERY).then((configQuery) => {
+      messageReadPrependQueryRef.current.value = configQuery
     })
-  }, [])
+  }, [needsReset])
 
-  const onTriggerModeChange = useCallback((e) => {
-    const mode = e.target.value
-    setTriggerMode(mode)
-    updateUserConfig({ triggerMode: mode })
-  }, [])
+  const saveNewQuery = () => {
+    const messageReadPrependQuery = messageReadPrependQueryRef.current.value
+    const updateObj = {
+      [keys.MESSAGE_PREPEND_QUERY]: messageReadPrependQuery,
+    }
+    updateUserConfig(updateObj)
+  }
+
+  const restoreToDefault = async () => {
+    await deleteKey(keys.MESSAGE_PREPEND_QUERY)
+    const userQuery = await getUserConfig(keys.MESSAGE_PREPEND_QUERY)
+    console.log(`KEVINDEBUG the userQuery after reset is ${userQuery}`)
+    setNeedsReset(!needsReset) // Just toggling to redraw the component
+  }
 
   return (
     <div className="container">
-      <form>
-        <fieldset onChange={onTriggerModeChange}>
-          <legend>Trigger Mode</legend>
-          {Object.entries(TRIGGER_MODES).map(([value, label]) => {
-            return (
-              <label htmlFor={value} key={value}>
-                <input
-                  type="radio"
-                  id={value}
-                  name="triggerMode"
-                  value={value}
-                  checked={triggerMode === value}
-                />
-                {label}
-              </label>
-            )
-          })}
-        </fieldset>
-      </form>
+      <div>
+        <h4>Message Read Query </h4>
+      </div>
+      <textarea
+        type="text"
+        ref={messageReadPrependQueryRef}
+        name="new-question"
+        rows="10"
+      ></textarea>
+      <div className="button-container">
+        <button className="button-with-margin" onClick={restoreToDefault}>
+          {' '}
+          Restore to Default{' '}
+        </button>
+        <button className="button-with-margin" onClick={saveNewQuery}>
+          {' '}
+          Update{' '}
+        </button>
+      </div>
       <a
-        href="https://github.com/wong2/chat-gpt-google-extension"
+        href="https://github.com/kevin36524/ChatGPTMail"
         target="_blank"
         rel="noreferrer"
         className="github-link"

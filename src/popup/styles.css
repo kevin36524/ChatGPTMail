@@ -15,6 +15,15 @@
   margin-bottom: 0;
 }
 
+.button-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.button-with-margin {
+  margin: 10px;
+}
+
 .github-link {
   float: right;
   margin-bottom: 10px;
