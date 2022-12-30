@@ -84,18 +84,15 @@ function ChatGPTQuery(props) {
       conversationId: answer.conversationId,
     })
 
-    console.log(`KEVINDEBUG delete ${answer.conversationId}`)
     props.closeCallback()
   }
 
   const askFollowUpQuestion = () => {
     setQuestion(followUpQuestionText)
-    console.log(`KEVINDEBUG I will ask ${followUpQuestionText} on ${answer.conversationId}`)
     followUpQuestionRef.current.value = ''
   }
 
   if (answer) {
-    console.log(`KEVINDEBUG re-rendering ${answer.conversationId}`)
     return (
       <div id="answer" className="markdown-body gpt-inner" dir="auto">
         <div className="gpt-header">

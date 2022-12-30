@@ -1,6 +1,6 @@
 {
-  "name": "chat-gpt-google-extension",
-  "author": "wong2",
+  "name": "chat-gpt-mail-extension",
+  "author": "kevin36524",
   "scripts": {
     "build": "node build.mjs",
     "lint": "eslint --ext .js,.mjs,.jsx .",

@@ -3,7 +3,7 @@ import { render } from 'preact'
 import { unmountComponentAtNode } from 'preact/compat'
 import { getUserConfig, keys } from '../config'
 import ChatGPTCard from './ChatGPTCard'
-import { config } from './search-engine-configs.mjs'
+import { config } from './email-site-configs.mjs'
 import './styles.scss'
 import { getPossibleElementByQuerySelector } from './utils.mjs'
 

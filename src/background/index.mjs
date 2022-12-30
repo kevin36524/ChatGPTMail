@@ -92,7 +92,6 @@ async function generateAnswers(port, question, conversationId, parentMessageId) 
 
 Browser.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener(async (msg) => {
-    console.log('KEVINDEBUG received msg', msg)
     try {
       if (msg.command == 'deleteConversation') {
         await deleteConversation(msg.conversationId)
