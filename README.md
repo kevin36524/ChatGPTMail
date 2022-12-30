@@ -79,4 +79,4 @@ A browser extension to help compose and consume Mails with ChatGPT supports Chro
 
 ## Credit
 
-This project is derived from by [wong2/chat-gpt-google-extension](https://github.com/wong2/chat-gpt-google-extension)
+This project is derived from [wong2/chat-gpt-google-extension](https://github.com/wong2/chat-gpt-google-extension)
