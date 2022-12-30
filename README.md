@@ -1,6 +1,8 @@
 # ChatGPT Yahoo Mail Chrome extension 
 
-A browser extension to help compose and consume Mails with ChatGPT supports Chrome/Edge/Firefox
+A browser extension to help compose and consume Mails with ChatGPT.
+
+Check out the video [here](https://youtu.be/O5Q2TXEfZJo)
 
 ## Features
 - Compose emails based on a subject: Simply type in a subject and the extension will generate a draft email for you based on that subject.
