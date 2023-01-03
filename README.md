@@ -2,7 +2,7 @@
 
 A browser extension to help compose and consume Mails with ChatGPT.
 
-Check out the video [here](https://youtu.be/O5Q2TXEfZJo)
+Check out the video [here](https://www.youtube.com/watch?v=poT70lHWJDg)
 
 ## Features
 - Compose emails based on a subject: Simply type in a subject and the extension will generate a draft email for you based on that subject.
@@ -19,6 +19,10 @@ Check out the video [here](https://youtu.be/O5Q2TXEfZJo)
 <img width="1724" alt="image" src="https://user-images.githubusercontent.com/349873/210038326-ec1b4f26-c325-4b08-a569-20df193d3c76.png">
 
 ## Installation
+
+#### Install from Chrome Store (Preffered)
+
+https://chrome.google.com/webstore/detail/chatgpt-for-yahoo-mail/kmgiileoaajaicaolhcopgjgmbajkpee
 
 
 #### Local Install
